@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.job4j.chat.Job4jChatApplication;
@@ -39,6 +40,7 @@ class PersonControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     public void findAllPersonsTest() throws Exception {
 
         Person person1 = Person.of("person 1", "password 1", null);
@@ -60,6 +62,7 @@ class PersonControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     public void findByIdFoundTest() throws Exception {
 
         Person person1 = Person.of("person 1", "password 1", null);
@@ -74,6 +77,7 @@ class PersonControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     public void findByIdNotFoundTest() throws Exception {
 
         mockMvc.perform(get("/person/{id}", 1))
@@ -82,6 +86,7 @@ class PersonControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     public void createPersonTest() throws Exception {
 
         Person person1 = Person.of("person 1", "password 1", null);
@@ -98,6 +103,7 @@ class PersonControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     public void updatePersonTest() throws Exception {
 
         Person oldPerson = Person.of("old person 1", "old password 1", null);
@@ -121,6 +127,7 @@ class PersonControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     public void deletePersonTest() throws Exception {
 
         Person personToDelete = Person.of("person 1", "password 1", null);

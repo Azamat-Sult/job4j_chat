@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.job4j.chat.Job4jChatApplication;
@@ -39,6 +40,7 @@ class MessageControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     public void findAllMessagesTest() throws Exception {
 
         Message message1 = Message.of("message 1", null);
@@ -58,6 +60,7 @@ class MessageControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     public void findByIdFoundTest() throws Exception {
 
         Message message1 = Message.of("message 1", null);
@@ -71,6 +74,7 @@ class MessageControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     public void findByIdNotFoundTest() throws Exception {
 
         mockMvc.perform(get("/message/{id}", 1))
@@ -79,6 +83,7 @@ class MessageControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     public void createMessageTest() throws Exception {
 
         Message message1 = Message.of("message 1", null);
@@ -94,6 +99,7 @@ class MessageControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     public void updateMessageTest() throws Exception {
 
         Message oldMessage = Message.of("old message 1", null);
@@ -116,6 +122,7 @@ class MessageControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     public void deleteMessageTest() throws Exception {
 
         Message message = Message.of("message 1", null);

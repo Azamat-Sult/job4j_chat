@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.job4j.chat.Job4jChatApplication;
@@ -39,6 +40,7 @@ class RoomControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     public void findAllRoomsTest() throws Exception {
 
         Room room1 = Room.of("room 1", "description 1", null);
@@ -58,6 +60,7 @@ class RoomControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     public void findByIdFoundTest() throws Exception {
 
         Room room1 = Room.of("room 1", "description 1", null);
@@ -72,6 +75,7 @@ class RoomControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     public void findByIdNotFoundTest() throws Exception {
 
         mockMvc.perform(get("/room/{id}", 1))
@@ -80,6 +84,7 @@ class RoomControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     public void createRoomTest() throws Exception {
 
         Room room1 = Room.of("room 1", "description 1", null);
@@ -96,6 +101,7 @@ class RoomControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     public void updateRoomTest() throws Exception {
 
         Room oldRoom = Room.of("old room 1", "old description 1", null);
@@ -119,6 +125,7 @@ class RoomControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     public void deleteRoomTest() throws Exception {
 
         Room room1 = Room.of("room 1", "description 1", null);

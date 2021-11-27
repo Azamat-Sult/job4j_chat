@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.job4j.chat.Job4jChatApplication;
@@ -39,6 +40,7 @@ class RoleControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     public void findAllRolesTest() throws Exception {
 
         Role role1 = Role.of("admin");
@@ -60,6 +62,7 @@ class RoleControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     public void findByIdFoundTest() throws Exception {
 
         Role role1 = Role.of("admin");
@@ -73,6 +76,7 @@ class RoleControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     public void findByIdNotFoundTest() throws Exception {
 
         mockMvc.perform(get("/role/{id}", 1))
@@ -81,6 +85,7 @@ class RoleControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     public void createRoleTest() throws Exception {
 
         Role role1 = Role.of("admin");
@@ -96,6 +101,7 @@ class RoleControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     public void updateRoleTest() throws Exception {
 
         Role oldRole = Role.of("admin");
@@ -118,6 +124,7 @@ class RoleControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin")
     public void deleteRoleTest() throws Exception {
 
         Role roleToDelete = Role.of("admin");
