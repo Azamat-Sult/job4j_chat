@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.chat.domain.Person;
 import ru.job4j.chat.repository.PersonRepository;
 
@@ -33,15 +34,25 @@ public class PersonController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Person> findById(@PathVariable int id) {
+        if (id < 1) {
+            throw new NullPointerException("Person id can`t be less than 1");
+        }
         var person = this.personRepository.findById(id);
         return new ResponseEntity<>(
-                person.orElse(new Person()),
-                person.isPresent() ? HttpStatus.OK : HttpStatus.NOT_FOUND
+                person.orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND, "Person not found. Please, check id"
+                        )
+                ),
+                HttpStatus.OK
         );
     }
 
     @PostMapping("/")
     public ResponseEntity<Person> create(@RequestBody Person person) {
+        if (person.getUsername() == null || person.getPassword() == null) {
+            throw new NullPointerException("Username and password can`t be empty");
+        }
         return new ResponseEntity<>(
                 this.personRepository.save(person),
                 HttpStatus.CREATED
@@ -50,12 +61,18 @@ public class PersonController {
 
     @PutMapping("/")
     public ResponseEntity<Void> update(@RequestBody Person person) {
+        if (person.getUsername() == null || person.getPassword() == null) {
+            throw new NullPointerException("Username and password can`t be empty");
+        }
         this.personRepository.save(person);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable int id) {
+        if (id < 1) {
+            throw new NullPointerException("Person id can`t be less than 1");
+        }
         Person person = new Person();
         person.setId(id);
         this.personRepository.delete(person);
@@ -64,6 +81,9 @@ public class PersonController {
 
     @PostMapping("/sign-up")
     public void signUp(@RequestBody Person person) {
+        if (person.getUsername() == null || person.getPassword() == null) {
+            throw new NullPointerException("Username and password can`t be empty");
+        }
         person.setPassword(encoder.encode(person.getPassword()));
         personRepository.save(person);
     }
