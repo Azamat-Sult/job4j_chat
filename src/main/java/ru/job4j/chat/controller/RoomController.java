@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.chat.domain.Room;
 import ru.job4j.chat.repository.RoomRepository;
+import ru.job4j.chat.service.UpdateFieldsPartially;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -17,8 +19,12 @@ public class RoomController {
 
     private final RoomRepository roomRepository;
 
-    public RoomController(RoomRepository roomRepository) {
+    private final UpdateFieldsPartially service;
+
+    public RoomController(RoomRepository roomRepository,
+                          UpdateFieldsPartially service) {
         this.roomRepository = roomRepository;
+        this.service = service;
     }
 
     @GetMapping("/")
@@ -73,6 +79,15 @@ public class RoomController {
         room.setId(id);
         this.roomRepository.delete(room);
         return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/")
+    public ResponseEntity<Room> patchRoom(@RequestBody Room room)
+            throws InvocationTargetException, IllegalAccessException {
+        return new ResponseEntity<>(
+                this.service.updateFieldsPartially(roomRepository, room),
+                HttpStatus.OK
+        );
     }
 
 }

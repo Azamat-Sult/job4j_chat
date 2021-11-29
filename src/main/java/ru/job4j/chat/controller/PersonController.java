@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.chat.domain.Person;
 import ru.job4j.chat.repository.PersonRepository;
+import ru.job4j.chat.service.UpdateFieldsPartially;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -18,10 +20,15 @@ public class PersonController {
 
     private final PersonRepository personRepository;
 
+    private final UpdateFieldsPartially service;
+
     private final BCryptPasswordEncoder encoder;
 
-    public PersonController(PersonRepository personRepository, BCryptPasswordEncoder encoder) {
+    public PersonController(PersonRepository personRepository,
+                            UpdateFieldsPartially service,
+                            BCryptPasswordEncoder encoder) {
         this.personRepository = personRepository;
+        this.service = service;
         this.encoder = encoder;
     }
 
@@ -86,6 +93,15 @@ public class PersonController {
         }
         person.setPassword(encoder.encode(person.getPassword()));
         personRepository.save(person);
+    }
+
+    @PatchMapping("/")
+    public ResponseEntity<Person> patchPerson(@RequestBody Person person)
+            throws InvocationTargetException, IllegalAccessException {
+        return new ResponseEntity<>(
+                this.service.updateFieldsPartially(personRepository, person),
+                HttpStatus.OK
+        );
     }
 
 }

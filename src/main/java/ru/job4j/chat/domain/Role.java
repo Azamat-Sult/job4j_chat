@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import java.util.Objects;
 
 @Entity
-public class Role {
+public class Role extends Model {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

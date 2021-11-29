@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.Objects;
 
 @Entity
-public class Message {
+public class Message extends Model {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

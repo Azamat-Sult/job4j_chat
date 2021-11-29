@@ -7,10 +7,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.chat.domain.Message;
 import ru.job4j.chat.repository.MessageRepository;
+import ru.job4j.chat.service.UpdateFieldsPartially;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,11 +24,15 @@ public class MessageController {
 
     private final MessageRepository messageRepository;
 
+    private final UpdateFieldsPartially service;
+
     private final ObjectMapper objectMapper;
 
     public MessageController(MessageRepository messageRepository,
+                             UpdateFieldsPartially service,
                              ObjectMapper objectMapper) {
         this.messageRepository = messageRepository;
+        this.service = service;
         this.objectMapper = objectMapper;
     }
 
@@ -103,6 +109,15 @@ public class MessageController {
             put("message", e.getMessage());
             put("type", e.getClass());
         }}));
+    }
+
+    @PatchMapping("/")
+    public ResponseEntity<Message> patchMessage(@RequestBody Message message)
+            throws InvocationTargetException, IllegalAccessException {
+        return new ResponseEntity<>(
+                this.service.updateFieldsPartially(messageRepository, message),
+                HttpStatus.OK
+        );
     }
 
 }

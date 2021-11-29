@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-public class Room {
+public class Room extends Model {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
