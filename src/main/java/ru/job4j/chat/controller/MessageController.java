@@ -11,6 +11,7 @@ import ru.job4j.chat.service.UpdateFieldsPartially;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -61,7 +62,7 @@ public class MessageController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Message> create(@RequestBody Message message) {
+    public ResponseEntity<Message> create(@Valid @RequestBody Message message) {
         if (message.getText() == null) {
             throw new NullPointerException("Message text can`t be empty");
         }
@@ -77,7 +78,7 @@ public class MessageController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<Void> update(@RequestBody Message message) {
+    public ResponseEntity<Void> update(@Valid @RequestBody Message message) {
         if (message.getText() == null) {
             throw new NullPointerException("Message text can`t be empty");
         }
@@ -112,7 +113,7 @@ public class MessageController {
     }
 
     @PatchMapping("/")
-    public ResponseEntity<Message> patchMessage(@RequestBody Message message)
+    public ResponseEntity<Message> patchMessage(@Valid @RequestBody Message message)
             throws InvocationTargetException, IllegalAccessException {
         return new ResponseEntity<>(
                 this.service.updateFieldsPartially(messageRepository, message),

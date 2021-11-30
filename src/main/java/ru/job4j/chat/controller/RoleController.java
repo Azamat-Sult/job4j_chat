@@ -8,6 +8,7 @@ import ru.job4j.chat.domain.Role;
 import ru.job4j.chat.repository.RoleRepository;
 import ru.job4j.chat.service.UpdateFieldsPartially;
 
+import javax.validation.Valid;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,7 +51,7 @@ public class RoleController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Role> create(@RequestBody Role role) {
+    public ResponseEntity<Role> create(@Valid @RequestBody Role role) {
         if (role.getRole() == null) {
             throw new NullPointerException("Role can`t be empty");
         }
@@ -61,7 +62,7 @@ public class RoleController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<Void> update(@RequestBody Role role) {
+    public ResponseEntity<Void> update(@Valid @RequestBody Role role) {
         if (role.getRole() == null) {
             throw new NullPointerException("Role can`t be empty");
         }
@@ -81,7 +82,7 @@ public class RoleController {
     }
 
     @PatchMapping("/")
-    public ResponseEntity<Role> patchRole(@RequestBody Role role)
+    public ResponseEntity<Role> patchRole(@Valid @RequestBody Role role)
             throws InvocationTargetException, IllegalAccessException {
         return new ResponseEntity<>(
                 this.service.updateFieldsPartially(roleRepository, role),

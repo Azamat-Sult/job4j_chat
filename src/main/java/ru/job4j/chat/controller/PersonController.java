@@ -9,6 +9,7 @@ import ru.job4j.chat.domain.Person;
 import ru.job4j.chat.repository.PersonRepository;
 import ru.job4j.chat.service.UpdateFieldsPartially;
 
+import javax.validation.Valid;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,7 +57,7 @@ public class PersonController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Person> create(@RequestBody Person person) {
+    public ResponseEntity<Person> create(@Valid @RequestBody Person person) {
         if (person.getUsername() == null || person.getPassword() == null) {
             throw new NullPointerException("Username and password can`t be empty");
         }
@@ -67,7 +68,7 @@ public class PersonController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<Void> update(@RequestBody Person person) {
+    public ResponseEntity<Void> update(@Valid @RequestBody Person person) {
         if (person.getUsername() == null || person.getPassword() == null) {
             throw new NullPointerException("Username and password can`t be empty");
         }
@@ -87,7 +88,7 @@ public class PersonController {
     }
 
     @PostMapping("/sign-up")
-    public void signUp(@RequestBody Person person) {
+    public void signUp(@Valid @RequestBody Person person) {
         if (person.getUsername() == null || person.getPassword() == null) {
             throw new NullPointerException("Username and password can`t be empty");
         }

@@ -1,6 +1,8 @@
 package ru.job4j.chat.domain;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,8 +13,11 @@ public class Room extends Model {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Min(value = 0, message = "Id must not be negative")
     private int id;
+    @NotBlank(message = "Room name must be not empty")
     private String name;
+    @NotBlank(message = "Room description must be not empty")
     private String description;
     @ManyToOne
     @JoinColumn(name = "owner_id")

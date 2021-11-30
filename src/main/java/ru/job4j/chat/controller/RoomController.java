@@ -8,6 +8,7 @@ import ru.job4j.chat.domain.Room;
 import ru.job4j.chat.repository.RoomRepository;
 import ru.job4j.chat.service.UpdateFieldsPartially;
 
+import javax.validation.Valid;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,7 +52,7 @@ public class RoomController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Room> create(@RequestBody Room room) {
+    public ResponseEntity<Room> create(@Valid @RequestBody Room room) {
         if (room.getName() == null || room.getDescription() == null) {
             throw new NullPointerException("Room name and description can`t be empty");
         }
@@ -62,7 +63,7 @@ public class RoomController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<Void> update(@RequestBody Room room) {
+    public ResponseEntity<Void> update(@Valid @RequestBody Room room) {
         if (room.getName() == null || room.getDescription() == null) {
             throw new NullPointerException("Room name and description can`t be empty");
         }
@@ -82,7 +83,7 @@ public class RoomController {
     }
 
     @PatchMapping("/")
-    public ResponseEntity<Room> patchRoom(@RequestBody Room room)
+    public ResponseEntity<Room> patchRoom(@Valid @RequestBody Room room)
             throws InvocationTargetException, IllegalAccessException {
         return new ResponseEntity<>(
                 this.service.updateFieldsPartially(roomRepository, room),

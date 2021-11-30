@@ -1,6 +1,8 @@
 package ru.job4j.chat.domain;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
 @Entity
@@ -8,8 +10,11 @@ public class Person extends Model {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Min(value = 0, message = "Id must not be negative")
     private int id;
+    @NotBlank(message = "Username must be not empty")
     private String username;
+    @NotBlank(message = "Password must be not empty")
     private String password;
     @ManyToOne
     @JoinColumn(name = "role_id")
