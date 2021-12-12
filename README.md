@@ -1,15 +1,77 @@
 [![Build Status](https://app.travis-ci.com/Azamat-Sult/job4j_chat.svg?branch=main)](https://app.travis-ci.com/Azamat-Sult/job4j_chat)
 # job4j_chat
 
-В данном проекте реализован REST API для чата
+В данном проекте реализован REST API для чата:
 
-GET /person/ список всех пользователей.
-GET /person/{id} - пользователь с id.
-POST /person/ - создает пользователя.
-PUT /person/ - обновляет пользователя.
-DELETE /person/ - удаляет.
+POST http://localhost:8080/person/sign-up - регистрируем нового пользователя.
 
-Скриншот 1
-Скриншот 2
-Скриншот 3
-Скриншот 4
+{
+"username": "Genius",
+"password": "123456"
+}
+
+POST http://localhost:8080/login - входим в систему и получаем токен.
+
+{
+"username": "Genius",
+"password": "123456"
+}
+
+GET http://localhost:8080/room/ - получаем список всех комнат чата вместе с сообщениями.
+
+GET http://localhost:8080/room/{id} - получаем комнату по id вместе с сообщениями.
+
+POST http://localhost:8080/room/ - создаем комнату.
+
+{
+"name": "Новая комната",
+"description": "Описание новой комнаты"
+}
+
+PATCH http://localhost:8080/room/ - редактируем комнату.
+
+{
+"id": 4,
+"name": "Новая комната отредактированная",
+"description": "Описание новой комнаты обновленное"
+}
+
+DELETE http://localhost:8080/room/4 - удаляем комнату по id.
+
+POST http://localhost:8080/room/{id}/addMessage - добавляем сообщение в id комнату.
+
+{
+"text": "Новое сообщение"
+}
+
+PUT http://localhost:8080/message/ - редактируем сообщение по id.
+
+{
+"id" : "28",
+"text": "Отредактированное сообщение"
+}
+
+DELETE http://localhost:8080/room/5/deleteMessage/31 - удаляем из комнаты с id=5 сообщение с id=31
+
+Скриншот 1. Пробуем без авторизации получить список комнат чата и получаем ответ 403 Forbidden
+![ScreenShot](screenshots/Screenshot_1.jpg)
+Скриншот 2. Регистрируемся в системе, получаем зарегистрированного пользователя с id=9 и ответ 201 Created
+![ScreenShot](screenshots/Screenshot_2.jpg)
+Скриншот 3. Авторизуемся в системе. В ответе получаем токен для дальнейшей работы в системе
+![ScreenShot](screenshots/Screenshot_3.jpg)
+Скриншот 4. Опять пробуем получить список комнат чата, но уже указав полученный токен в запросе.
+![ScreenShot](screenshots/Screenshot_4.jpg)
+Скриншот 5. Получаем список комнат чата вместе со всеми сообщениями.
+![ScreenShot](screenshots/Screenshot_5.jpg)
+Скриншот 6. Получаем комнату чата по id. Не забываем добавить в заголовок токен
+![ScreenShot](screenshots/Screenshot_6.jpg)
+Скриншот 7. Создаем новую комнату. Не забываем добавить в заголовок токен
+![ScreenShot](screenshots/Screenshot_7.jpg)
+Скриншот 8. Редактируем существующую комнату. Не забываем добавить в заголовок токен
+![ScreenShot](screenshots/Screenshot_8.jpg)
+Скриншот 9. Удаляем существующую комнату по id. Не забываем добавить в заголовок токен
+![ScreenShot](screenshots/Screenshot_9.jpg)
+Скриншот 10. Добавляем новое сообщение в комнату. Не забываем добавить в заголовок токен
+![ScreenShot](screenshots/Screenshot_10.jpg)
+Скриншот 11. Редактируем сообщение по id. Не забываем добавить в заголовок токен
+![ScreenShot](screenshots/Screenshot_11.jpg)

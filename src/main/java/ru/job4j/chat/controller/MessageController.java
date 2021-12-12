@@ -3,10 +3,13 @@ package ru.job4j.chat.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.chat.domain.Message;
 import ru.job4j.chat.repository.MessageRepository;
+import ru.job4j.chat.repository.PersonRepository;
 import ru.job4j.chat.service.UpdateFieldsPartially;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,15 +26,19 @@ import java.util.stream.StreamSupport;
 @RequestMapping("/message")
 public class MessageController {
 
+    private final PersonRepository personRepository;
+
     private final MessageRepository messageRepository;
 
     private final UpdateFieldsPartially service;
 
     private final ObjectMapper objectMapper;
 
-    public MessageController(MessageRepository messageRepository,
+    public MessageController(PersonRepository personRepository,
+                             MessageRepository messageRepository,
                              UpdateFieldsPartially service,
                              ObjectMapper objectMapper) {
+        this.personRepository = personRepository;
         this.messageRepository = messageRepository;
         this.service = service;
         this.objectMapper = objectMapper;
@@ -71,6 +78,8 @@ public class MessageController {
                     "The message is too long (Max 255 characters)."
                             + " Please split the message into multiple messages");
         }
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        message.setAuthor(personRepository.findByUsername(auth.getName()));
         return new ResponseEntity<>(
                 this.messageRepository.save(message),
                 HttpStatus.CREATED
@@ -78,7 +87,7 @@ public class MessageController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<Void> update(@Valid @RequestBody Message message) {
+    public ResponseEntity<Message> update(@Valid @RequestBody Message message) {
         if (message.getText() == null) {
             throw new NullPointerException("Message text can`t be empty");
         }
@@ -87,8 +96,12 @@ public class MessageController {
                     "The message is too long (Max 255 characters)."
                             + " Please split the message into multiple messages");
         }
-        this.messageRepository.save(message);
-        return ResponseEntity.ok().build();
+        Message dbMessage = findById(message.getId()).getBody();
+        message.setAuthor(dbMessage.getAuthor());
+        return new ResponseEntity<>(
+                this.messageRepository.save(message),
+                HttpStatus.OK
+        );
     }
 
     @DeleteMapping("/{id}")

@@ -1,10 +1,16 @@
 package ru.job4j.chat.controller;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
+import ru.job4j.chat.domain.Message;
 import ru.job4j.chat.domain.Room;
+import ru.job4j.chat.repository.PersonRepository;
 import ru.job4j.chat.repository.RoomRepository;
 import ru.job4j.chat.service.UpdateFieldsPartially;
 
@@ -18,12 +24,23 @@ import java.util.stream.StreamSupport;
 @RequestMapping("/room")
 public class RoomController {
 
+    @Autowired
+    private RestTemplate rest;
+
+    private final PersonRepository personRepository;
+
     private final RoomRepository roomRepository;
 
     private final UpdateFieldsPartially service;
 
-    public RoomController(RoomRepository roomRepository,
+    private static final String MESSAGE_API = "http://localhost:8080/message/";
+
+    private static final String MESSAGE_API_ID = "http://localhost:8080/message/{id}";
+
+    public RoomController(PersonRepository personRepository,
+                          RoomRepository roomRepository,
                           UpdateFieldsPartially service) {
+        this.personRepository = personRepository;
         this.roomRepository = roomRepository;
         this.service = service;
     }
@@ -56,6 +73,8 @@ public class RoomController {
         if (room.getName() == null || room.getDescription() == null) {
             throw new NullPointerException("Room name and description can`t be empty");
         }
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        room.setOwner(personRepository.findByUsername(auth.getName()));
         return new ResponseEntity<>(
                 this.roomRepository.save(room),
                 HttpStatus.CREATED
@@ -87,6 +106,65 @@ public class RoomController {
             throws InvocationTargetException, IllegalAccessException {
         return new ResponseEntity<>(
                 this.service.updateFieldsPartially(roomRepository, room),
+                HttpStatus.OK
+        );
+    }
+
+    @PostMapping("/{id}/addMessage")
+    public ResponseEntity<Room> addMessageToRoom(@PathVariable int id,
+                                                 @Valid @RequestBody Message message,
+                                                 @RequestHeader("Authorization") String token) {
+
+        Room room = findById(id).getBody();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("Authorization", token);
+        HttpEntity<Message> httpEntity = new HttpEntity<>(message, headers);
+
+        Message newMessage = rest.postForObject(MESSAGE_API, httpEntity, Message.class);
+        room.addMessage(newMessage);
+
+        return new ResponseEntity<>(
+                this.roomRepository.save(room),
+                HttpStatus.CREATED
+        );
+    }
+
+    @DeleteMapping("/{roomId}/deleteMessage/{msgId}")
+    public ResponseEntity<Room> deleteMsgInRoom(@PathVariable int roomId,
+                                                @PathVariable int msgId,
+                                                @RequestHeader("Authorization") String token) {
+
+        Room room = findById(roomId).getBody();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("Authorization", token);
+        HttpEntity<Message> httpEntity = new HttpEntity<>(headers);
+
+        try {
+            Message message = rest.exchange(
+                    MESSAGE_API_ID,
+                    HttpMethod.GET,
+                    httpEntity,
+                    Message.class,
+                    msgId
+            ).getBody();
+            room.delMessage(message);
+        } catch (HttpStatusCodeException ex) {
+            if (ex.getStatusCode() == HttpStatus.NOT_FOUND) {
+                throw new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Message not found. Please, check id"
+                );
+            }
+            if (ex.getStatusCode() == HttpStatus.BAD_REQUEST) {
+                throw new NullPointerException("Message id can`t be less than 1");
+            }
+        }
+
+        return new ResponseEntity<>(
+                this.roomRepository.save(room),
                 HttpStatus.OK
         );
     }

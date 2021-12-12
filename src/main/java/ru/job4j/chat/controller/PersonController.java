@@ -6,7 +6,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.chat.domain.Person;
+import ru.job4j.chat.domain.Role;
 import ru.job4j.chat.repository.PersonRepository;
+import ru.job4j.chat.repository.RoleRepository;
 import ru.job4j.chat.service.UpdateFieldsPartially;
 
 import javax.validation.Valid;
@@ -19,15 +21,19 @@ import java.util.stream.StreamSupport;
 @RequestMapping("/person")
 public class PersonController {
 
+    private final RoleRepository roleRepository;
+
     private final PersonRepository personRepository;
 
     private final UpdateFieldsPartially service;
 
     private final BCryptPasswordEncoder encoder;
 
-    public PersonController(PersonRepository personRepository,
+    public PersonController(RoleRepository roleRepository,
+                            PersonRepository personRepository,
                             UpdateFieldsPartially service,
                             BCryptPasswordEncoder encoder) {
+        this.roleRepository = roleRepository;
         this.personRepository = personRepository;
         this.service = service;
         this.encoder = encoder;
@@ -88,12 +94,17 @@ public class PersonController {
     }
 
     @PostMapping("/sign-up")
-    public void signUp(@Valid @RequestBody Person person) {
+    public ResponseEntity<Person> signUp(@Valid @RequestBody Person person) {
         if (person.getUsername() == null || person.getPassword() == null) {
             throw new NullPointerException("Username and password can`t be empty");
         }
         person.setPassword(encoder.encode(person.getPassword()));
-        personRepository.save(person);
+        Role userRole = this.roleRepository.findByRole("ROLE_USER");
+        person.setRole(userRole);
+        return new ResponseEntity<>(
+                this.personRepository.save(person),
+                HttpStatus.CREATED
+        );
     }
 
     @PatchMapping("/")

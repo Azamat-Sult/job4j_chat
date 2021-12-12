@@ -8,6 +8,7 @@ import ru.job4j.chat.domain.Model;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -42,7 +43,7 @@ public class UpdateFieldsPartially {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid properties mapping");
                 }
                 Object newValue = getMethod.invoke(model);
-                if (newValue != null) {
+                if (newValue != null && !(newValue instanceof ArrayList)) {
                     setMethod.invoke(current, newValue);
                 }
             }

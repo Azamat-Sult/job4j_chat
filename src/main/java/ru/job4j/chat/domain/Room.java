@@ -80,6 +80,14 @@ public class Room extends Model {
         this.created = created;
     }
 
+    public void addMessage(Message message) {
+        this.messages.add(message);
+    }
+
+    public void delMessage(Message message) {
+        this.messages.remove(message);
+    }
+
     public List<Message> getMessages() {
         return messages;
     }
