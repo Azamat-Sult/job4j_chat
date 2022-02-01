@@ -53,6 +53,37 @@ PUT http://localhost:8080/message/ - редактируем сообщение �
 
 DELETE http://localhost:8080/room/5/deleteMessage/31 - удаляем из комнаты с id=5 сообщение с id=31
 
+### Запуск приложения через Docker Compose под Ubuntu
+
+Установка Docker compose:
+```
+sudo curl -L "https://github.com/docker/compose/releases/download/1.28.6/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+```
+
+Установка maven:
+```
+sudo apt-get update
+sudo apt-get install maven
+```
+
+Клонируем проект:
+```
+git clone https://github.com/Azamat-Sult/job4j_chat
+cd job4j_chat
+```
+
+Собираем проект:
+```
+mvn install
+docker build -t chat .
+```
+
+И наконец запускаем:
+```
+docker-compose up
+```
+
 Скриншот 1. Пробуем без авторизации получить список комнат чата и получаем ответ 403 Forbidden
 ![ScreenShot](screenshots/Screenshot_1.jpg)
 Скриншот 2. Регистрируемся в системе, получаем зарегистрированного пользователя с id=9 и ответ 201 Created
