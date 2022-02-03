@@ -1,4 +1,4 @@
-[![Build Status](https://app.travis-ci.com/Azamat-Sult/job4j_chat.svg?branch=main)](https://app.travis-ci.com/Azamat-Sult/job4j_chat)
+[![Build Status](https://app.travis-ci.com/Azamat-Sult/job4j_chat.svg?branch=master)](https://app.travis-ci.com/Azamat-Sult/job4j_chat)
 # job4j_chat
 
 В данном проекте реализован REST API для чата:
