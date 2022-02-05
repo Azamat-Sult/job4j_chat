@@ -84,6 +84,63 @@ docker build -t chat .
 docker-compose up
 ```
 
+### Разворачиваем стэк на кластере K8s:
+
+Запускаем кластер:
+```
+minikube start
+```
+Выполняем команду:
+```
+kubectl apply -f postgresdb-secret.yml
+```
+и проверяем, что secret создался:
+```
+kubectl get secret
+```
+![ScreenShot](screenshots/Screenshot_12.png)
+
+Вносим ConfigMap в кластер:
+```
+kubectl apply -f postgresdb-configmap.yml
+```
+и проверяем:
+```
+kubectl get configmaps
+```
+![ScreenShot](screenshots/Screenshot_13.png)
+
+Запускаем deployment для Postgres:
+```
+kubectl apply -f postgresdb-deployment.yml
+```
+и проверяем:
+```
+kubectl get deployments
+```
+![ScreenShot](screenshots/Screenshot_14.png)
+
+Запускаем deployment для нашего приложения Chat:
+```
+kubectl apply -f chat-deployment.yml
+```
+и проверяем:
+```
+kubectl logs -l app=spring-boot
+```
+![ScreenShot](screenshots/Screenshot_15.png)
+
+Команда service возвращает нам URL, по которому мы можем подключиться к сервису из вне:
+```
+minikube service spring-boot-service
+```
+![ScreenShot](screenshots/Screenshot_16.png)
+
+По заданному IP и порту мы можем делать запросы к нашему приложению
+Зарегистрируем нового пользователя в системе через Postman и убедимся 
+что все работает:
+![ScreenShot](screenshots/Screenshot_17.png)
+
 Скриншот 1. Пробуем без авторизации получить список комнат чата и получаем ответ 403 Forbidden
 ![ScreenShot](screenshots/Screenshot_1.jpg)
 Скриншот 2. Регистрируемся в системе, получаем зарегистрированного пользователя с id=9 и ответ 201 Created
